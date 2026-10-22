@@ -17,6 +17,7 @@ import {
   WebhookTargetBlockedError,
   InvalidWebhookUrlError,
 } from '../webhook-target.util';
+import { lookup as dnsLookupReal } from 'dns/promises';
 
 // ---------------------------------------------------------------------------
 // Mock dns/promises so we never make real network calls in unit tests.
@@ -25,9 +26,8 @@ jest.mock('dns/promises', () => ({
   lookup: jest.fn(),
 }));
 
-// We need a typed handle to the mock so individual tests can configure it.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const dnsLookup = require('dns/promises').lookup as jest.Mock;
+// Typed handle to the mocked lookup function for per-test configuration.
+const dnsLookup = jest.mocked(dnsLookupReal);
 
 // Helper to configure the mock to return a single resolved address.
 function mockDnsResolve(address: string): void {
