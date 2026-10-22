@@ -27,7 +27,10 @@ jest.mock('dns/promises', () => ({
 }));
 
 // Typed handle to the mocked lookup function for per-test configuration.
-const dnsLookup = jest.mocked(dnsLookupReal);
+// The double cast is needed because the import type is the real function
+// signature (with complex overloads), but at runtime jest.mock replaces it
+// with a jest.Mock that accepts any mock return value.
+const dnsLookup = dnsLookupReal as unknown as jest.Mock;
 
 // Helper to configure the mock to return a single resolved address.
 function mockDnsResolve(address: string): void {
